@@ -26,6 +26,9 @@ module.exports = {
       '@': resolve('src'),
     }
   },
+  externals: {
+    'transform-miniprogram': 'transform-miniprogram'
+  },
   module: {
     rules: [
       {

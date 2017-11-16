@@ -7,14 +7,29 @@
       <el-form-item label="项目路径:">
         <el-input v-model="form.src" >
       </el-form-item>
+      <el-form-item label="转换日志:">
+        <div class="transform-logs">
+          <h3 v-if="form.dist">输出项目路径：{{form.dist}}</h3>
+          <div v-for="log in logs">
+            <div>{{log.file}}<span v-if="log.row">:{{log.row}}:{{log.column}}</span></div>
+            <div class="tips" v-if="log.type === 'tips'">{{log.message}}</div>
+            <div class="error" v-else-if="log.type === 'error'">{{log.message}}</div>
+            <div v-else>
+              <div class="before">- {{log.before}}</div>
+              <div class="after">+ {{log.after}}</div>
+            </div>
+          </div>
+        </div>
+      </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="transform">转换</el-button>
+        <el-button class="transform-btn" type="primary" @click="transform">转换</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
+let transformMiniprogram = require('transform-miniprogram')
 import {Form, FormItem, Input, Radio} from 'element-ui'
 
 export default {
@@ -22,8 +37,10 @@ export default {
     return {
       form: {
         type: 'w2a',
-        src: '/Volumes/ext/weixin/aaa/'
-      }
+        src: '/Volumes/ext/weixin/aaa/',
+        dist: ''
+      },
+      logs: null
     }
   },
   components: {
@@ -34,7 +51,14 @@ export default {
   },
   methods: {
     transform () {
-      alert(1)
+      transformMiniprogram(this.form, (err, logs) => {
+        if (err) {
+          alert(err.message)
+        } else {
+          console.log(logs)
+          this.logs = logs
+        }
+      })
     }
   }
 }
@@ -53,5 +77,31 @@ export default {
   border-radius: 10px;
   padding: 10px;
   box-sizing: border-box;
+  
+  .transform-logs{
+    height:300px;
+    background-color: #272822;
+    overflow:auto;
+  }
+  
+  .tips{
+    color:#eb9e05;
+  }
+  
+  .error{
+    color:rgb(181,0,0);
+  }
+  
+  .before{
+    color:rgb(181,0,0);
+  }
+  
+  .after{
+    color:rgb(22,165,4);
+  }
+  
+  .transform-btn {
+    float:right
+  }
 }
 </style>
