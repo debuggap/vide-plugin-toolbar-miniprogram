@@ -22,6 +22,7 @@
         </div>
       </el-form-item>
       <el-form-item>
+        <el-button type="primary" @click="cancel">取消</el-button>
         <el-button class="transform-btn" type="primary" @click="transform">转换</el-button>
       </el-form-item>
     </el-form>
@@ -33,11 +34,12 @@ let transformMiniprogram = require('transform-miniprogram')
 import {Form, FormItem, Input, Radio} from 'element-ui'
 
 export default {
+  props: ['callback'],
   data () {
     return {
       form: {
         type: 'w2a',
-        src: '/Volumes/ext/weixin/aaa/',
+        src: '',
         dist: ''
       },
       logs: null
@@ -50,6 +52,9 @@ export default {
     'el-radio': Radio
   },
   methods: {
+    cancel () {
+      this.callback()
+    },
     transform () {
       transformMiniprogram(this.form, (err, logs) => {
         if (err) {
